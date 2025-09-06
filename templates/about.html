@@ -1,0 +1,136 @@
+   <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Building Materials</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Header */
+    header {
+      background: #2c3e50;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+    }
+
+    header .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    header nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    header nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    header nav ul li a:hover,
+    header nav ul li a.active {
+      color: #f1c40f;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: url('https://images.unsplash.com/photo-1590642911274-7a58a82a90f4?auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+      color: #fff;
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: 20px;
+    }
+
+    /* About Content */
+    .about {
+      padding: 50px 20px;
+      max-width: 1000px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .about h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .about p {
+      color: #333;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      background: #2c3e50;
+      color: #fff;
+      padding: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">🏗️ BM</div>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}" class="active">About Us</a></li>
+        <li><a href="{{ url_for('products') }}">Products</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('login') }}">Login</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>About Us</h1>
+    <p>Learn more about Building Materials and what we stand for</p>
+  </section>
+
+  <!-- About Content -->
+  <section class="about">
+    <h2>Who We Are</h2>
+    <p>
+      At <b>Building Materials Pvt. Ltd.</b>, we are dedicated to providing
+      high-quality construction materials including cement, steel, bricks,
+      and more. Our mission is to support builders, architects, and
+      contractors with the best resources for creating strong and durable
+      structures.
+    </p>
+    <p>
+      We have been in the industry for over 20 years, ensuring that every
+      project is backed by trust, quality, and excellence.
+    </p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Building Materials. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>

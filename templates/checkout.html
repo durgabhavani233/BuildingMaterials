@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Building Materials</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+    header { background: #2c3e50; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; }
+    header .logo { font-size: 24px; font-weight: bold; }
+    header nav ul { list-style: none; display: flex; gap: 20px; }
+    header nav ul li a { color: #fff; text-decoration: none; transition: 0.3s; }
+    header nav ul li a:hover, header nav ul li a.active { color: #f1c40f; }
+    .hero { background: #34495e; color: #fff; text-align: center; padding: 60px 20px; }
+    .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+    .checkout-form { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 30px; }
+    .checkout-form h2 { color: #2c3e50; margin-bottom: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: #2c3e50; font-weight: bold; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
+    .form-group textarea { height: 100px; resize: vertical; }
+    .place-order-btn { background: #27ae60; color: #fff; padding: 15px 30px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; }
+    .place-order-btn:hover { background: #229954; }
+    .order-summary { background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; padding: 25px; height: fit-content; }
+    .order-summary h3 { color: #2c3e50; margin-bottom: 20px; }
+    .summary-item { display: flex; justify-content: space-between; margin: 10px 0; padding: 8px 0; border-bottom: 1px solid #eee; }
+    .summary-item:last-child { border-bottom: none; }
+    .total-row { font-size: 20px; font-weight: bold; color: #2c3e50; border-top: 2px solid #ddd; padding-top: 15px; margin-top: 15px; }
+    .cart-items { margin-bottom: 20px; }
+    .cart-item { background: #fff; padding: 15px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #eee; }
+    .cart-item h4 { color: #2c3e50; margin-bottom: 5px; }
+    .cart-item p { color: #666; font-size: 14px; }
+    footer { text-align: center; background: #2c3e50; color: #fff; padding: 15px; margin-top: 40px; }
+    @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🏗️ BM</div>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About Us</a></li>
+        <li><a href="{{ url_for('products') }}">Products</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('view_cart') }}">🛒 Cart</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Checkout</h1>
+  </section>
+
+  <section class="container">
+    <div class="checkout-form">
+      <h2>Shipping & Payment Information</h2>
+      <form method="post" action="{{ url_for('place_order') }}">
+        <div class="form-group">
+          <label for="shipping_address">Shipping Address:</label>
+          <textarea id="shipping_address" name="shipping_address" placeholder="Enter your complete shipping address..." required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="payment_method">Payment Method:</label>
+          <select id="payment_method" name="payment_method" required>
+            <option value="">Select payment method</option>
+            <option value="Cash on Delivery">Cash on Delivery</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="UPI">UPI</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Debit Card">Debit Card</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="place-order-btn">Place Order</button>
+      </form>
+    </div>
+
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      
+      <div class="cart-items">
+        {% for item in cart_items %}
+          <div class="cart-item">
+            <h4>{{ item.product_name }}</h4>
+            <p>Quantity: {{ item.quantity }} × ₹{{ "%.2f"|format(item.unit_price) }}</p>
+            <p>Subtotal: ₹{{ "%.2f"|format(item.unit_price * item.quantity) }}</p>
+          </div>
+        {% endfor %}
+      </div>
+      
+      <div class="summary-item">
+        <span>Subtotal:</span>
+        <span>₹{{ "%.2f"|format(subtotal) }}</span>
+      </div>
+      
+      <div class="summary-item">
+        <span>Shipping Charges:</span>
+        <span>₹{{ "%.2f"|format(shipping_charges) }}</span>
+      </div>
+      
+      <div class="summary-item total-row">
+        <span>Total Amount:</span>
+        <span>₹{{ "%.2f"|format(total) }}</span>
+      </div>
+      
+      <div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 6px; border-left: 4px solid #27ae60;">
+        <p style="color: #27ae60; font-weight: bold; margin: 0;">
+          {% if shipping_charges == 0 %}
+            🎉 Free shipping on orders above ₹1000!
+          {% else %}
+            💡 Add ₹{{ "%.2f"|format(1000 - subtotal) }} more for free shipping!
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Building Materials. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>

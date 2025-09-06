@@ -1,0 +1,220 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - Building Materials</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Header */
+    header {
+      background: #2c3e50;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+    }
+
+    header .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    header nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    header nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    header nav ul li a:hover,
+    header nav ul li a.active {
+      color: #f1c40f;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+      color: #fff;
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: 20px;
+    }
+
+    /* Products Grid */
+    .products {
+      padding: 50px 20px;
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #ecf0f1;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .product-card h3 {
+      margin: 15px 0 10px;
+      color: #2c3e50;
+    }
+
+    .product-card p {
+      color: #333;
+      font-size: 14px;
+      padding: 0 10px 15px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      background: #2c3e50;
+      color: #fff;
+      padding: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">🏗️ BM</div>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About Us</a></li>
+        <li><a href="#" class="active">Products</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('login') }}">Login</a></li>
+        <li><a href="{{ url_for('view_cart') }}">🛒 Cart</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Our Products</h1>
+    <p>High-quality building materials for every construction need</p>
+  </section>
+
+  <!-- Products Grid -->
+  <section class="products">
+    <!-- Existing Products -->
+    <a class="product-card" href="{{ url_for('product_detail', item='concrete') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://media.istockphoto.com/id/692096736/photo/concrete-pouring-during-commercial-concreting-floors-of-building.jpg?s=612x612&w=0&k=20&c=LuGlrtanYNsJNatAYczwcEC5QCpJjsGhSFUcora3MfE=" alt="Concrete">
+      <h3>Concrete</h3>
+      <p>Durable ready-mix concrete for strong foundations.</p>
+    </a>
+
+    <a class="product-card" href="{{ url_for('product_detail', item='bricks') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://t3.ftcdn.net/jpg/05/61/69/58/360_F_561695885_nsjqnCQs0O9vkg78kPY0Pj2r3j5tBwXa.jpg" alt="Brick">
+      <h3>Bricks</h3>
+      <p>High-quality red clay bricks for walls and structures.</p>
+    </a>
+
+    <a class="product-card" href="{{ url_for('product_detail', item='steel') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://www.shutterstock.com/image-photo/prepare-products-delivery-customers-deformed-260nw-2462110609.jpg" alt="Steel">
+      <h3>Steel</h3>
+      <p>Strong TMT steel bars for long-lasting construction.</p>
+    </a>
+
+    <a class="product-card" href="{{ url_for('product_detail', item='wood') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://4.imimg.com/data4/WN/KO/MY-3909841/wooden-logs.jpg" alt="Wood">
+      <h3>Wood</h3>
+      <p>Premium timber and plywood for interiors and roofing.</p>
+    </a>
+
+    <a class="product-card" href="{{ url_for('product_detail', item='cement') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://5.imimg.com/data5/LU/KD/MY-53176023/ultratech-cement.jpg" alt="Cement">
+      <h3>Cement</h3>
+      <p>OPC and PPC cement for all types of construction needs.</p>
+    </a>
+
+    <a class="product-card" href="{{ url_for('product_detail', item='tiles') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://www.shutterstock.com/image-photo/colored-samples-ceramic-tiles-kitchen-600nw-2117695976.jpg" alt="Tiles">
+      <h3>Tiles</h3>
+      <p>Beautiful floor and wall tiles for modern designs.</p>
+    </a>
+
+    <a class="product-card" href="{{ url_for('product_detail', item='sand') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://cementshop.in/wp-content/uploads/2021/06/sand2.jpg" alt="Sand">
+      <h3>Sand</h3>
+      <p>High-grade river sand and M-sand for construction.</p>
+    </a>
+
+    <a class="product-card" href="{{ url_for('product_detail', item='aggregate') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://5.imimg.com/data5/SELLER/Default/2022/2/JA/TV/UJ/14684209/10-mm-construction-aggerate-500x500.jpg" alt="Aggregate">
+      <h3>Aggregate</h3>
+      <p>Crushed stone and gravel aggregates for concrete mixes.</p>
+    </a>
+
+
+
+    <!-- New Products -->
+    <a class="product-card" href="{{ url_for('product_detail', item='glass') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://t3.ftcdn.net/jpg/02/74/92/66/360_F_274926617_3PkKeuunfe0Ch4KIo8ANcOdJB1zjaxYU.jpg" alt="Glass">
+      <h3>Glass</h3>
+      <p>Clear and toughened glass for windows and facades.</p>
+    </a>
+
+    
+    
+
+    <a class="product-card" href="{{ url_for('product_detail', item='marble') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://rynestone.in/cdn/shop/articles/Featured_Image_BLogb_1.png?v=1643613468" alt="Marble">
+      <h3>Marble</h3>
+      <p>Premium marble for flooring and countertops.</p>
+    </a>
+
+    <a class="product-card" href="{{ url_for('product_detail', item='gypsum') }}" style="text-decoration:none; color:inherit;">
+      <img src="https://www.croplife.com/wp-content/uploads/2020/12/Gypsum-Source-of-Calcium-and-Sulfur.jpg" alt="Gypsum">
+      <h3>Gypsum</h3>
+      <p>Gypsum boards for ceilings and partitions.</p>
+    </a>
+
+  
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Building Materials. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>

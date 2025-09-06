@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation - Building Materials</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+    header { background: #2c3e50; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; }
+    header .logo { font-size: 24px; font-weight: bold; }
+    header nav ul { list-style: none; display: flex; gap: 20px; }
+    header nav ul li a { color: #fff; text-decoration: none; transition: 0.3s; }
+    header nav ul li a:hover, header nav ul li a.active { color: #f1c40f; }
+    .hero { background: #27ae60; color: #fff; text-align: center; padding: 60px 20px; }
+    .hero h1 { font-size: 48px; margin-bottom: 15px; }
+    .hero p { font-size: 20px; }
+    .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+    .success-card { background: #fff; border: 2px solid #27ae60; border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 30px; }
+    .success-icon { font-size: 64px; margin-bottom: 20px; }
+    .tracking-info { background: #f8f9fa; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
+    .tracking-info h3 { color: #2c3e50; margin-bottom: 15px; }
+    .tracking-id { background: #2c3e50; color: #fff; padding: 15px; border-radius: 6px; font-size: 18px; font-weight: bold; margin: 15px 0; }
+    .order-details { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
+    .order-details h3 { color: #2c3e50; margin-bottom: 20px; }
+    .order-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
+    .order-item:last-child { border-bottom: none; }
+    .item-info h4 { color: #2c3e50; margin-bottom: 5px; }
+    .item-price { color: #27ae60; font-weight: bold; }
+    .total-section { background: #e8f5e8; border-radius: 8px; padding: 20px; margin: 20px 0; }
+    .total-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 18px; }
+    .final-total { font-size: 24px; font-weight: bold; color: #2c3e50; border-top: 2px solid #27ae60; padding-top: 15px; margin-top: 15px; }
+    .action-buttons { text-align: center; margin-top: 30px; }
+    .btn { display: inline-block; padding: 12px 24px; margin: 0 10px; text-decoration: none; border-radius: 6px; font-weight: bold; }
+    .btn-primary { background: #3498db; color: #fff; }
+    .btn-primary:hover { background: #2980b9; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-success:hover { background: #229954; }
+    footer { text-align: center; background: #2c3e50; color: #fff; padding: 15px; margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🏗️ BM</div>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About Us</a></li>
+        <li><a href="{{ url_for('products') }}">Products</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('my_orders') }}">My Orders</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>🎉 Order Placed Successfully!</h1>
+    <p>Thank you for your purchase. Your order has been confirmed.</p>
+  </section>
+
+  <section class="container">
+    <div class="success-card">
+      <div class="success-icon">✅</div>
+      <h2>Order Confirmed!</h2>
+      <p>We've received your order and will begin processing it immediately.</p>
+      <p>You'll receive updates on your order status via email and SMS.</p>
+    </div>
+
+    <div class="tracking-info">
+      <h3>📦 Tracking Information</h3>
+      <p>Use this tracking ID to monitor your order:</p>
+      <div class="tracking-id">{{ tracking_id }}</div>
+      <p><strong>Order Date:</strong> {{ orders[0].order_date.strftime('%B %d, %Y at %I:%M %p') if orders[0].order_date else 'N/A' }}</p>
+      <p><strong>Estimated Delivery:</strong> 3-5 business days</p>
+    </div>
+
+    <div class="order-details">
+      <h3>📋 Order Details</h3>
+      {% for order in orders %}
+        <div class="order-item">
+          <div class="item-info">
+            <h4>{{ order.product_name }}</h4>
+            <p>Quantity: {{ order.quantity }} × ₹{{ "%.2f"|format(order.unit_price) }}</p>
+          </div>
+          <div class="item-price">₹{{ "%.2f"|format(order.subtotal) }}</div>
+        </div>
+      {% endfor %}
+      
+      <div class="total-section">
+        {% set total_subtotal = orders|sum(attribute='subtotal') %}
+        {% set total_shipping = orders|sum(attribute='shipping_charges') %}
+        {% set grand_total = orders|sum(attribute='total_amount') %}
+        <div class="total-row">
+          <span>Subtotal:</span>
+          <span>₹{{ "%.2f"|format(total_subtotal) }}</span>
+        </div>
+        <div class="total-row">
+          <span>Shipping Charges:</span>
+          <span>₹{{ "%.2f"|format(total_shipping) }}</span>
+        </div>
+        <div class="total-row final-total">
+          <span>Total Amount:</span>
+          <span>₹{{ "%.2f"|format(grand_total) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <a href="{{ url_for('track_order', tracking_id=tracking_id) }}" class="btn btn-primary">Track Order</a>
+      <a href="{{ url_for('products') }}" class="btn btn-success">Continue Shopping</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Building Materials. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>
