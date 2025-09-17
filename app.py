@@ -437,12 +437,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import random
 import string
+import os
 
 app = Flask(__name__)
 app.secret_key = "BuildingMaterial"
 
 # ✅ Replace with your MongoDB Atlas connection string
-app.config["MONGO_URI"] = "mongodb+srv://pdurgabhavani233_db_user:Bhavani@cluster0.kusp0to.mongodb.net/"
+app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
 mongo = PyMongo(app)
 
