@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = "BuildingMaterial"
 
 # ✅ Use environment variable (Render) or fallback local URI
-MONGO_URI = "mongodb+srv://pdurgabhavani233_db_user:pdurgabhavani233_db_user@cluster0.kusp0to.mongodb.net"
+MONGO_URI = "mongodb+srv://pdurgabhavani233_db_user:pdurgabhavani233_db_user@cluster0.kusp0to.mongodb.net/buildingmaterials?retryWrites=true&w=majority&appName=Cluster0"
 app.config["MONGO_URI"] = MONGO_URI
 
 mongo = PyMongo(app)
