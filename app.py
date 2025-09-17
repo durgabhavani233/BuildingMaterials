@@ -5,27 +5,23 @@ from datetime import datetime
 import random
 import string
 import os
-from bson import ObjectId
 
 app = Flask(__name__)
 app.secret_key = "BuildingMaterial"
 
-# ✅ Use environment variable (Render) or fallback local URI
-MONGO_URI = "mongodb+srv://pdurgabhavani233_db_user:pdurgabhavani233_db_user@cluster0.kusp0to.mongodb.net/buildingmaterials?retryWrites=true&w=majority&appName=Cluster0"
-app.config["MONGO_URI"] = MONGO_URI
+# ✅ MongoDB Atlas connection (use environment variable in Render)
+app.config["MONGO_URI"] = os.getenv(
+    "MONGO_URI",
+    "mongodb+srv://pdurgabhavani233_db_user:pdurgabhavani233_db_user@cluster0.kusp0to.mongodb.net/buildingmaterials?retryWrites=true&w=majority&appName=Cluster0"
+)
 
 mongo = PyMongo(app)
 
-# ✅ Ensure DB connection exists
-if mongo.db is None:
-    raise RuntimeError("❌ MongoDB connection failed. Check your MONGO_URI.")
-
 # Collections
-db = mongo.db
-users_col = db["users"]
-cart_col = db["cart"]
-orders_col = db["orders"]
-reviews_col = db["reviews"]
+users_col = mongo.db.users
+cart_col = mongo.db.cart
+orders_col = mongo.db.orders
+reviews_col = mongo.db.reviews
 
 # Product catalog (static)
 PRODUCT_CATALOG = {
@@ -46,7 +42,7 @@ PRODUCT_CATALOG = {
     }
 }
 
-
+# Login required decorator
 def login_required(view_func):
     def wrapper(*args, **kwargs):
         if "user_id" not in session:
@@ -55,21 +51,27 @@ def login_required(view_func):
     wrapper.__name__ = view_func.__name__
     return wrapper
 
-
+# Tracking ID generator
 def generate_tracking_id():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
-
+# Routes
 @app.route("/")
 def home():
     return render_template("index.html")
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
 
 @app.route("/products")
 @login_required
 def products():
     return render_template("product.html", products=PRODUCT_CATALOG)
-
 
 @app.route("/products/<item>")
 @login_required
@@ -79,20 +81,26 @@ def product_detail(item):
         return redirect(url_for("products"))
     return render_template("product_detail.html", product=product)
 
-
 @app.route("/add_to_cart", methods=["POST"])
 @login_required
 def add_to_cart():
     product_name = request.form.get("product_name")
     quantity = int(request.form.get("quantity", 1))
 
-    product = next((data for data in PRODUCT_CATALOG.values() if data["name"].lower() == product_name.lower()), None)
+    product = None
+    for key, data in PRODUCT_CATALOG.items():
+        if data["name"].lower() == product_name.lower():
+            product = data
+            break
     if not product:
         return redirect(url_for("products"))
 
     existing = cart_col.find_one({"username": session["user_id"], "product_name": product["name"]})
     if existing:
-        cart_col.update_one({"_id": existing["_id"]}, {"$inc": {"quantity": quantity}})
+        cart_col.update_one(
+            {"_id": existing["_id"]},
+            {"$inc": {"quantity": quantity}}
+        )
     else:
         cart_col.insert_one({
             "username": session["user_id"],
@@ -104,7 +112,6 @@ def add_to_cart():
 
     return redirect(url_for("view_cart"))
 
-
 @app.route("/cart")
 @login_required
 def view_cart():
@@ -112,13 +119,12 @@ def view_cart():
     total = sum(item["unit_price"] * item["quantity"] for item in cart_items)
     return render_template("cart.html", cart_items=cart_items, total=total)
 
-
 @app.route("/remove_from_cart/<item_id>")
 @login_required
 def remove_from_cart(item_id):
+    from bson import ObjectId
     cart_col.delete_one({"_id": ObjectId(item_id), "username": session["user_id"]})
     return redirect(url_for("view_cart"))
-
 
 @app.route("/checkout")
 @login_required
@@ -132,7 +138,6 @@ def checkout():
     total = subtotal + shipping_charges
     return render_template("checkout.html", cart_items=cart_items,
                            subtotal=subtotal, shipping_charges=shipping_charges, total=total)
-
 
 @app.route("/place_order", methods=["POST"])
 @login_required
@@ -166,11 +171,9 @@ def place_order():
             "tracking_id": tracking_id
         })
 
-    # Clear cart
     cart_col.delete_many({"username": session["user_id"]})
 
     return redirect(url_for("order_confirmation", tracking_id=tracking_id))
-
 
 @app.route("/order_confirmation/<tracking_id>")
 @login_required
@@ -180,7 +183,6 @@ def order_confirmation(tracking_id):
         return redirect(url_for("products"))
     return render_template("order_confirm.html", orders=orders, tracking_id=tracking_id)
 
-
 @app.route("/track_order/<tracking_id>")
 @login_required
 def track_order(tracking_id):
@@ -189,17 +191,16 @@ def track_order(tracking_id):
         return redirect(url_for("products"))
     return render_template("track_order.html", orders=orders, tracking_id=tracking_id)
 
-
 @app.route("/my_orders")
 @login_required
 def my_orders():
     orders = list(orders_col.find({"username": session["user_id"]}).sort("order_date", -1))
     return render_template("my_orders.html", orders=orders)
 
-
 @app.route("/review_order/<order_id>", methods=["GET", "POST"])
 @login_required
 def review_order(order_id):
+    from bson import ObjectId
     order = orders_col.find_one({"_id": ObjectId(order_id), "username": session["user_id"]})
     if not order:
         return redirect(url_for("products"))
@@ -226,7 +227,6 @@ def review_order(order_id):
     existing_review = reviews_col.find_one({"order_id": order_id})
     return render_template("review_order.html", order=order, existing_review=existing_review)
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -238,7 +238,6 @@ def login():
             return redirect(url_for("products"))
         return render_template("login.html", error="Invalid credentials")
     return render_template("login.html")
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -257,12 +256,10 @@ def register():
         return redirect(url_for("products"))
     return render_template("register.html")
 
-
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("home"))
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)
